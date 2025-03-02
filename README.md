@@ -16,7 +16,7 @@ This project is inspired by the library natural-cron, which converts natural lan
 Add the following line to your `Cargo.toml` under `[dependencies]`:
 
 ```toml
-english_to_cron = "0.1.0" 
+english_to_cron = "0.1" 
 ```
 
 ## Usage
