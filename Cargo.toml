@@ -1,6 +1,6 @@
 [package]
 name = "english-to-cron"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "converts natural language into cron expressions"
 homepage = "https://docs.rs/english-to-cron"
