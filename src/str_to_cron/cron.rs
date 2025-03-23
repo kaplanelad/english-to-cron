@@ -50,22 +50,20 @@ impl std::fmt::Display for Cron {
     }
 }
 
-pub fn to_string(tokens: Vec<String>) -> Result<String> {
-    let mut cron = Cron::default();
-    for token in tokens {
-        if let Some(state) = action::try_from_token(&token) {
-            state.process(&token, &mut cron)?;
-        }
-    }
-
-    Ok(format!("{cron}"))
-}
-
-impl FromStr for Cron {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+impl Cron {
+    /// Creates a new `Cron` instance from a given cron expression string.
+    ///
+    /// This function tokenizes the input string and processes each token to construct
+    /// a valid `Cron` representation. If the input is empty or contains invalid tokens,
+    /// an error is returned.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::InvalidInput`] if the input is empty or contains invalid tokens.
+    ///
+    pub fn new(text: &str) -> Result<Self> {
         let tokenizer = Tokenizer::new();
-        let tokens = tokenizer.run(s);
+        let tokens = tokenizer.run(text);
 
         if tokens.is_empty() {
             return Err(Error::InvalidInput);
@@ -78,5 +76,12 @@ impl FromStr for Cron {
             }
         }
         Ok(cron)
+    }
+}
+
+impl FromStr for Cron {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::new(s)
     }
 }

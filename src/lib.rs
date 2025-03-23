@@ -2,7 +2,7 @@
 #[allow(clippy::doc_markdown)]
 #[doc = include_str!("../README.md")]
 mod str_to_cron;
-pub use str_to_cron::{Cron, Error, Result, Tokenizer};
+pub use str_to_cron::{Cron, Error, Result};
 
 /// Converts an English description of a schedule into cronjob syntax.
 ///
@@ -38,12 +38,6 @@ pub use str_to_cron::{Cron, Error, Result, Tokenizer};
 ///
 /// [`Error`]: str_to_cron::Error
 pub fn str_cron_syntax(input: &str) -> str_to_cron::Result<String> {
-    let tokenizer = str_to_cron::Tokenizer::new();
-    let tokens = tokenizer.run(input);
-
-    if tokens.is_empty() {
-        return Err(str_to_cron::Error::InvalidInput);
-    }
-
-    str_to_cron::to_string(tokens)
+    let cron = str_to_cron::Cron::new(input)?;
+    Ok(format!("{cron}"))
 }
