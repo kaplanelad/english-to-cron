@@ -55,7 +55,8 @@ pub fn process(token: &str, cron: &mut Cron) {
             | Kind::Minute
             | Kind::Hour
             | Kind::RangeEnd
-            | Kind::Secund => {}
+            | Kind::Secund
+            | Kind::OnlyOn => {}
         }
         element.owner = Kind::RangeEnd;
     }

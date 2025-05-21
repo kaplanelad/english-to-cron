@@ -83,6 +83,13 @@ use rstest::rstest;
 #[case("Run at 5:15am every Tuesday", Ok("0 15 5 ? * TUE *"))]
 #[case("7pm every Thursday", Ok("0 0 19 ? * THU *"))]
 #[case("2pm and 6pm", Ok("0 0 14,18 * * ? *"))]
+#[case("5am, 10am and 3pm", Ok("0 0 5,10,15 * * ? *"))]
+#[case("Run every hour only on Monday", Ok("0 0 * ? * MON *"))]
+#[case("Run every 30 seconds only on weekends", Ok("0/30 * * ? * SAT,SUN *"))]
+#[case("4pm, 5pm and 7pm", Ok("0 0 16,17,19 * * ? *"))]
+#[case("4pm, 5pm, and 7pm", Ok("0 0 16,17,19 * * ? *"))]
+#[case("4pm, 5pm, 7pm", Ok("0 0 16,17,19 * * ? *"))]
+#[case("4pm and 5pm and 7pm", Ok("0 0 16,17,19 * * ? *"))]
 #[test]
 fn can_parse_string(
     #[case] cron_str: &str,

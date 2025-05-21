@@ -76,6 +76,8 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
                 error: format!("value {token} is not a weekend format"),
             });
         }
+
+        // Set the day of week
         cron.syntax.day_of_week = String::new();
 
         let days: Vec<String> = matches
@@ -98,19 +100,44 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
                 element.day = Some(data.clone());
 
                 if let (Some(start), Some(end)) = (data.start, data.end) {
-                    write!(cron.syntax.day_of_week, "{start}-{end}").unwrap();
+                    write!(cron.syntax.day_of_week, "{start}-{end}").map_err(|_| {
+                        Error::IncorrectValue {
+                            state: "day".to_string(),
+                            error: "Failed to format day of week range".to_string(),
+                        }
+                    })?;
                 }
 
                 cron.syntax.day_of_month = "?".to_string();
                 cron.stack.pop();
                 return Ok(());
+            } else if element.owner == Kind::OnlyOn {
+                // Special case for "only on" syntax
+                let day = days.first().cloned().ok_or_else(|| Error::IncorrectValue {
+                    state: "day".to_string(),
+                    error: "Expected at least one day in 'only on' syntax but found none"
+                        .to_string(),
+                })?;
+                cron.syntax.day_of_week = day;
+                cron.syntax.day_of_month = "?".to_string();
+
+                // Remove the "only on" entry from the stack
+                cron.stack.pop();
+
+                return Ok(());
             }
-            cron.stack.pop();
+
+            // For other cases, clear the stack to start fresh
+            cron.stack.clear();
         }
 
+        // Normal processing for days
         for &day in &WEEK_DAYS {
             if days.contains(&day.to_string()) && !cron.syntax.day_of_week.contains(day) {
-                write!(cron.syntax.day_of_week, "{day},").unwrap();
+                write!(cron.syntax.day_of_week, "{day},").map_err(|_| Error::IncorrectValue {
+                    state: "day".to_string(),
+                    error: "Failed to format day of week".to_string(),
+                })?;
             }
         }
 
@@ -118,7 +145,12 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
         if days.contains(&"WEEKEND".to_string()) {
             for &day in &["SAT", "SUN"] {
                 if !cron.syntax.day_of_week.contains(day) {
-                    write!(cron.syntax.day_of_week, "{day},").unwrap();
+                    write!(cron.syntax.day_of_week, "{day},").map_err(|_| {
+                        Error::IncorrectValue {
+                            state: "day".to_string(),
+                            error: "Failed to format weekend days".to_string(),
+                        }
+                    })?;
                 }
             }
         }

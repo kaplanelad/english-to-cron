@@ -126,7 +126,7 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
             });
             return Ok(());
         } else if element.owner == Kind::RangeEnd {
-            if let Some(element_hour) = &element.hour {
+            if let Some(element_hour) = &mut element.hour {
                 if element_hour.start == Some(hour) {
                     element.min = Some(StartEnd {
                         start: Some(hour),
@@ -134,11 +134,17 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
                     });
                     cron.syntax.hour = format!("{hour}-{hour}");
                 } else {
-                    element.hour.clone().unwrap().end = Some(hour);
+                    element_hour.end = Some(hour);
                     if element.is_and_connector && !element.is_between_range {
                         // Use comma for "and" connector but not in a "between X and Y" context
-                        cron.syntax.hour =
-                            format!("{},{}", element_hour.start.unwrap_or_default(), hour);
+                        // Check if the syntax hour already has values
+                        if cron.syntax.hour.contains(',') {
+                            // If it already has comma-separated values, append the new hour
+                            cron.syntax.hour = format!("{},{}", cron.syntax.hour, hour);
+                        } else {
+                            cron.syntax.hour =
+                                format!("{},{}", element_hour.start.unwrap_or_default(), hour);
+                        }
                     } else {
                         // Use hyphen for other range connectors or for "between X and Y"
                         cron.syntax.hour =

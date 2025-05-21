@@ -11,7 +11,9 @@ fn main() {
     ];
 
     for text in texts {
-        let res = english_to_cron::Cron::from_str(text).unwrap();
-        println!("{text}: {res}");
+        match english_to_cron::Cron::from_str(text) {
+            Ok(res) => println!("{text}: {res}"),
+            Err(e) => eprintln!("Error parsing '{text}': {e}"),
+        }
     }
 }

@@ -39,13 +39,13 @@ impl std::fmt::Display for Cron {
         write!(
             f,
             "{} {} {} {} {} {} {}",
-            self.syntax.seconds,
-            self.syntax.min,
-            self.syntax.hour,
-            self.syntax.day_of_month,
-            self.syntax.month,
-            self.syntax.day_of_week,
-            self.syntax.year,
+            self.syntax.seconds.trim(),
+            self.syntax.min.trim(),
+            self.syntax.hour.trim(),
+            self.syntax.day_of_month.trim(),
+            self.syntax.month.trim(),
+            self.syntax.day_of_week.trim(),
+            self.syntax.year.trim(),
         )
     }
 }

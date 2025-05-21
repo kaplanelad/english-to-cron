@@ -39,6 +39,8 @@ pub enum Kind {
     RangeStart,
     /// Token indicating the end of a range.
     RangeEnd,
+    /// Token indicating "only on" directive.
+    OnlyOn,
 }
 
 /// Attempts to match the provided token to one of the `Kind` enumerations.
@@ -57,6 +59,7 @@ pub fn try_from_token(token: &str) -> Option<Kind> {
             Kind::Year => year::try_from_token(token),
             Kind::RangeStart => range_start::try_from_token(token),
             Kind::RangeEnd => range_end::try_from_token(token),
+            Kind::OnlyOn => token.to_lowercase() == "only on",
         };
         if is_match {
             return Some(state_kind);
@@ -67,7 +70,7 @@ pub fn try_from_token(token: &str) -> Option<Kind> {
 
 impl Kind {
     /// Provides an iterator over all possible [`Kind`] values.
-    const fn iterator() -> [Self; 11] {
+    const fn iterator() -> [Self; 12] {
         [
             Self::FrequencyWith,
             Self::FrequencyOnly,
@@ -80,6 +83,7 @@ impl Kind {
             Self::Year,
             Self::RangeStart,
             Self::RangeEnd,
+            Self::OnlyOn,
         ]
     }
 
@@ -106,6 +110,10 @@ impl Kind {
             Self::Year => year::process(token, cron)?,
             Self::RangeStart => range_start::process(token, cron),
             Self::RangeEnd => range_end::process(token, cron),
+            Self::OnlyOn => {
+                // When "only on" is encountered, we don't need to do anything special
+                // The next token should be a day, which will be handled correctly
+            }
         }
 
         Ok(())
