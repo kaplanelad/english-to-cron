@@ -11,6 +11,7 @@ use super::super::{
     Error, Result,
 };
 use regex::Regex;
+use std::fmt::Write;
 use std::sync::LazyLock;
 
 /// Regular expression to match valid month input in various formats (e.g., "January", "JAN").
@@ -132,7 +133,7 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
 
         for &month in &MONTHS {
             if months.contains(&month.to_string()) && !cron.syntax.month.contains(month) {
-                cron.syntax.month.push_str(&format!("{month},"));
+                write!(cron.syntax.month, "{month},").unwrap();
             }
         }
 

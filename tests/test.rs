@@ -40,6 +40,10 @@ use rstest::rstest;
 )]
 #[case("Run every 1 hour only on weekends", Ok("0 0 0/1 ? * SAT,SUN *"))]
 #[case("Run every hour only on weekends", Ok("0 0 * ? * SAT,SUN *"))]
+#[case(
+    "2pm on Tuesday, Wednesday and Thursday",
+    Ok("0 0 14 ? * TUE,WED,THU *")
+)]
 // Days
 #[case("Run every day", Ok("0 0 0 */1 * ? *"))]
 #[case("Run every 4 days", Ok("0 0 0 */4 * ? *"))]
@@ -78,6 +82,7 @@ use rstest::rstest;
 #[case("midnight on Tuesdays", Ok("0 0 0 ? * TUE *"))]
 #[case("Run at 5:15am every Tuesday", Ok("0 15 5 ? * TUE *"))]
 #[case("7pm every Thursday", Ok("0 0 19 ? * THU *"))]
+#[case("2pm and 6pm", Ok("0 0 14,18 * * ? *"))]
 #[test]
 fn can_parse_string(
     #[case] cron_str: &str,

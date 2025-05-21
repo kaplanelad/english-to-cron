@@ -24,6 +24,8 @@ pub struct Stack {
     pub month: Option<StartEndString>,
     pub year: Option<StartEnd>,
     pub day_of_week: Option<String>,
+    pub is_and_connector: bool,
+    pub is_between_range: bool,
 }
 
 impl Stack {
@@ -40,6 +42,8 @@ impl Stack {
                 month: None,
                 year: None,
                 day_of_week: None,
+                is_and_connector: false,
+                is_between_range: false,
             },
         }
     }

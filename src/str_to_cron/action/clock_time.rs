@@ -135,8 +135,15 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
                     cron.syntax.hour = format!("{hour}-{hour}");
                 } else {
                     element.hour.clone().unwrap().end = Some(hour);
-                    cron.syntax.hour =
-                        format!("{}-{}", element_hour.start.unwrap_or_default(), hour);
+                    if element.is_and_connector && !element.is_between_range {
+                        // Use comma for "and" connector but not in a "between X and Y" context
+                        cron.syntax.hour =
+                            format!("{},{}", element_hour.start.unwrap_or_default(), hour);
+                    } else {
+                        // Use hyphen for other range connectors or for "between X and Y"
+                        cron.syntax.hour =
+                            format!("{}-{}", element_hour.start.unwrap_or_default(), hour);
+                    }
                 }
             }
 

@@ -13,6 +13,7 @@ use super::super::{
     Error, Result,
 };
 use regex::Regex;
+use std::fmt::Write;
 use std::sync::LazyLock;
 
 /// Matches various formats for days, including full names and abbreviations.
@@ -97,7 +98,7 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
                 element.day = Some(data.clone());
 
                 if let (Some(start), Some(end)) = (data.start, data.end) {
-                    cron.syntax.day_of_week = format!("{start}-{end}",);
+                    write!(cron.syntax.day_of_week, "{start}-{end}").unwrap();
                 }
 
                 cron.syntax.day_of_month = "?".to_string();
@@ -109,7 +110,7 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
 
         for &day in &WEEK_DAYS {
             if days.contains(&day.to_string()) && !cron.syntax.day_of_week.contains(day) {
-                cron.syntax.day_of_week.push_str(&format!("{day},"));
+                write!(cron.syntax.day_of_week, "{day},").unwrap();
             }
         }
 
@@ -117,7 +118,7 @@ pub fn process(token: &str, cron: &mut Cron) -> Result<()> {
         if days.contains(&"WEEKEND".to_string()) {
             for &day in &["SAT", "SUN"] {
                 if !cron.syntax.day_of_week.contains(day) {
-                    cron.syntax.day_of_week.push_str(&format!("{day},"));
+                    write!(cron.syntax.day_of_week, "{day},").unwrap();
                 }
             }
         }

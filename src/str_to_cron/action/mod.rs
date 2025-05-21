@@ -104,8 +104,8 @@ impl Kind {
             Self::Hour => hour::process(token, cron),
             Self::Month => month::process(token, cron)?,
             Self::Year => year::process(token, cron)?,
-            Self::RangeStart => range_start::process(cron),
-            Self::RangeEnd => range_end::process(cron),
+            Self::RangeStart => range_start::process(token, cron),
+            Self::RangeEnd => range_end::process(token, cron),
         }
 
         Ok(())
