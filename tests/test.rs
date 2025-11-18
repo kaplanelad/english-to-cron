@@ -1,5 +1,27 @@
 use english_to_cron::str_cron_syntax;
 use rstest::rstest;
+use std::result::Result;
+
+// Test case demonstrating std::error::Error implementation without anyhow
+// This verifies that the Error type can be used with standard Rust error handling
+// and works with the ? operator in functions returning Box<dyn std::error::Error>
+#[test]
+fn test_error_with_std_error_trait() -> Result<(), Box<dyn std::error::Error>> {
+    // Test successful case - verify ? operator works
+    let _cron = str_cron_syntax("every 5 minutes")?;
+
+    // Test error case - verify error can be converted to Box<dyn std::error::Error>
+    let result: Result<String, Box<dyn std::error::Error>> =
+        str_cron_syntax("invalid input").map_err(|e| Box::new(e) as Box<dyn std::error::Error>);
+
+    assert!(result.is_err());
+    assert!(result
+        .unwrap_err()
+        .to_string()
+        .contains("Please enter human readable"));
+
+    Ok(())
+}
 
 #[rstest]
 // Seconds

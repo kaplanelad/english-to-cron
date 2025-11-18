@@ -63,6 +63,13 @@ impl std::fmt::Display for Error {
     }
 }
 
+/// Implements the `std::error::Error` trait for the `Error` enum.
+///
+/// This allows the error type to be used with the `?` operator and error handling
+/// libraries like `anyhow` and `thiserror`. The default implementation is sufficient
+/// since `Error` already implements `Display` and `Debug`.
+impl std::error::Error for Error {}
+
 /// Custom `Result` type alias for the "English to Corn" project.
 ///
 /// This is a convenience alias for `std::result::Result` where the error type defaults to the `Error` enum.
