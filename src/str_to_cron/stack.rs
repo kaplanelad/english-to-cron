@@ -86,6 +86,7 @@ impl Builder {
 
 impl Stack {
     pub fn frequency_to_string(&self) -> String {
-        self.frequency.map_or("*".to_string(), |a| a.to_string())
+        self.frequency
+            .map_or_else(|| "*".to_string(), |a| a.to_string())
     }
 }
